@@ -107,15 +107,26 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="dxG-Tk-qa0">
-                                <rect key="frame" x="0.0" y="59" width="393" height="759"/>
-                                <color key="backgroundColor" name="YPBlack"/>
-                            </imageView>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ka1-ji-S34">
+                                <rect key="frame" x="-20" y="39" width="433" height="799"/>
+                                <subviews>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="dxG-Tk-qa0">
+                                        <rect key="frame" x="20" y="20" width="393" height="759"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" name="YPBlack"/>
+                                    </imageView>
+                                </subviews>
+                                <viewLayoutGuide key="contentLayoutGuide" id="WcQ-dY-Hq8"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="eaq-42-VhA"/>
+                                <connections>
+                                    <outlet property="delegate" destination="3DF-EX-DbE" id="A1W-3K-VY3"/>
+                                </connections>
+                            </scrollView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ajs-i5-Klv">
-                                <rect key="frame" x="8" y="67" width="48" height="48"/>
+                                <rect key="frame" x="0.0" y="59" width="48" height="48"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="48" id="hQF-2k-2ZC"/>
-                                    <constraint firstAttribute="height" constant="48" id="rmt-E7-FAV"/>
+                                    <constraint firstAttribute="height" constant="48" id="NoA-PT-qR1"/>
+                                    <constraint firstAttribute="width" constant="48" id="plg-go-beq"/>
                                 </constraints>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                 <state key="normal" image="Backward"/>
@@ -127,17 +138,18 @@
                         <viewLayoutGuide key="safeArea" id="WAW-Fb-qO0"/>
                         <color key="backgroundColor" name="YPBlack"/>
                         <constraints>
-                            <constraint firstItem="ajs-i5-Klv" firstAttribute="top" secondItem="WAW-Fb-qO0" secondAttribute="top" constant="8" id="BHZ-EN-e4i"/>
-                            <constraint firstItem="dxG-Tk-qa0" firstAttribute="top" secondItem="WAW-Fb-qO0" secondAttribute="top" id="KoB-MF-iH6"/>
-                            <constraint firstItem="ajs-i5-Klv" firstAttribute="leading" secondItem="WAW-Fb-qO0" secondAttribute="leading" constant="8" id="dfJ-wR-Efw"/>
-                            <constraint firstItem="WAW-Fb-qO0" firstAttribute="trailing" secondItem="dxG-Tk-qa0" secondAttribute="trailing" id="hn2-OM-Kpv"/>
-                            <constraint firstItem="dxG-Tk-qa0" firstAttribute="leading" secondItem="WAW-Fb-qO0" secondAttribute="leading" id="mjg-8z-hT9"/>
-                            <constraint firstItem="WAW-Fb-qO0" firstAttribute="bottom" secondItem="dxG-Tk-qa0" secondAttribute="bottom" id="nze-1A-Abw"/>
+                            <constraint firstAttribute="trailing" secondItem="ka1-ji-S34" secondAttribute="trailing" id="2Ai-Vn-fzd"/>
+                            <constraint firstItem="ajs-i5-Klv" firstAttribute="top" secondItem="WAW-Fb-qO0" secondAttribute="top" id="H4S-zN-zRp"/>
+                            <constraint firstItem="ka1-ji-S34" firstAttribute="top" secondItem="II3-wZ-lG7" secondAttribute="top" id="Hd9-Sf-aaf"/>
+                            <constraint firstItem="ajs-i5-Klv" firstAttribute="leading" secondItem="WAW-Fb-qO0" secondAttribute="leading" id="VOS-Eo-hWy"/>
+                            <constraint firstAttribute="bottom" secondItem="ka1-ji-S34" secondAttribute="bottom" id="mId-md-2RC"/>
+                            <constraint firstItem="ka1-ji-S34" firstAttribute="leading" secondItem="II3-wZ-lG7" secondAttribute="leading" id="uh4-3r-JMg"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="BiA-Ms-Ae4"/>
                     <connections>
                         <outlet property="imageView" destination="dxG-Tk-qa0" id="cgL-6A-yRc"/>
+                        <outlet property="scrollView" destination="ka1-ji-S34" id="98J-M1-ezo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qxY-qj-fzw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
