@@ -12,13 +12,23 @@ final class SingleImageViewController : UIViewController {
     // MARK: Variables
     var image: UIImage? {
         didSet {
-            if let image = image {
-                imageView.image = image
-                imageView.frame.size = image.size
-                
-                rescaleAndCenterImageInScrollView(image: image)
-            }
+            guard isViewLoaded, let image else { return }
+
+            imageView.image = image
+            imageView.frame.size = image.size
+            rescaleAndCenterImageInScrollView(image: image)
         }
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        scrollView.minimumZoomScale = 0.1
+        scrollView.maximumZoomScale = 1.25
+
+        guard let image else { return }
+        imageView.image = image
+        imageView.frame.size = image.size
+        rescaleAndCenterImageInScrollView(image: image)
     }
     
     // MARK: Outlets
@@ -30,6 +40,14 @@ final class SingleImageViewController : UIViewController {
     
     @IBAction func didTapBackButton(_ sender: Any) {
         dismiss(animated: true, completion: nil)
+    }
+    @IBAction func didTapShareButton(_ sender: Any) {
+        guard let image else { return }
+        let share = UIActivityViewController(
+            activityItems: [image],
+            applicationActivities: nil
+        )
+        present(share, animated: true, completion: nil)
     }
     
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
@@ -47,22 +65,6 @@ final class SingleImageViewController : UIViewController {
         let x = (newContentSize.width - visibleRectSize.width) / 2
         let y = (newContentSize.height - visibleRectSize.height) / 2
         scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        scrollView.minimumZoomScale = 0.1
-        scrollView.maximumZoomScale = 1.25
-        if let image = image {
-            imageView.image = image
-            imageView.frame.size = image.size
-            
-            rescaleAndCenterImageInScrollView(image: image)
-        }
-        
-        
-        
-        
     }
     
 }
