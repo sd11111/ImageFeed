@@ -1,10 +1,3 @@
-//
-//  SplashViewController.swift
-//  ImageFeed
-//
-//  Created by Semen Davydov on 07.10.2026.
-//
-
 import UIKit
 
 final class SplashViewController : UIViewController, AuthViewControllerDelegate {

@@ -1,19 +1,14 @@
-//
-//  AuthViewController.swift
-//  ImageFeed
-//
-//  Created by Semen Davydov on 06.10.2026.
-//
 import UIKit
 import WebKit
 
 enum WebViewConstants {
     static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
+    static let showWebView = "ShowWebView"
 }
 
 final class AuthViewController: UIViewController {
     weak var delegate: AuthViewControllerDelegate?
-    private let oauth2Service = OAuth2Service()
+    private let oauth2Service = OAuth2Service.shared
     private func configureBackButton() {
         navigationController?.navigationBar.backIndicatorImage = UIImage(named: "nav_back_button")
         navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(named: "nav_back_button")
@@ -22,7 +17,7 @@ final class AuthViewController: UIViewController {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "ShowWebView" {
+        if segue.identifier == WebViewConstants.showWebView {
             guard
                 let webViewViewController = segue.destination as? WebViewViewController
             else {

@@ -3,9 +3,12 @@ import Foundation
 
 final class OAuth2Service {
     private let tokenStorage = OAuth2TokenStorage()
+    static let shared = OAuth2Service()
+    private init() { }
     
     private func makeOAuthTokenRequest(code: String) -> URLRequest? {
         guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token") else {
+            print("Ошибка - не удалось создать URLComponents для OAuth token")
             return nil
         }
         
@@ -18,6 +21,7 @@ final class OAuth2Service {
         ]
         
         guard let authTokenUrl = urlComponents.url else {
+            print("Ошибка - не удалось создать URL для OAuth token")
             return nil
         }
         
