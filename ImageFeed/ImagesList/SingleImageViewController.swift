@@ -1,10 +1,3 @@
-//
-//  SingleImageViewController.swift
-//  ImageFeed
-//
-//  Created by Semen Davydov on 21.09.2026.
-//
-
 import Foundation
 import UIKit
 
