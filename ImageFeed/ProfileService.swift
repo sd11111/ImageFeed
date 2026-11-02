@@ -10,7 +10,7 @@ struct Profile {
 struct ProfileResult: Codable {
     let username: String
     let firstName: String
-    let lastName: String
+    let lastName: String?
     let bio: String?
 
     private enum CodingKeys: String, CodingKey {
@@ -36,6 +36,10 @@ final class ProfileService {
         task?.cancel()
 
         guard let request = makeProfileRequest(token: token) else {
+            print(
+                "[ProfileService.fetchProfile]: " +
+                "RequestError - не удалось создать запрос GET /me"
+            )
             completion(.failure(URLError(.badURL)))
             return
         }
@@ -45,9 +49,17 @@ final class ProfileService {
             switch result {
 
             case .success(let profileResult):
+                let name = [
+                    profileResult.firstName,
+                    profileResult.lastName
+                ]
+                    .compactMap { $0 }
+                    .filter { !$0.isEmpty }
+                    .joined(separator: " ")
+
                 let profile = Profile(
                     username: profileResult.username,
-                    name: "\(profileResult.firstName) \(profileResult.lastName)",
+                    name: name,
                     loginName: "@\(profileResult.username)",
                     bio: profileResult.bio
                 )
@@ -56,7 +68,10 @@ final class ProfileService {
                 completion(.success(profile))
 
             case .failure(let error):
-                print("[ProfileService.fetchProfile]: \(error.localizedDescription)")
+                print(
+                    "[ProfileService.fetchProfile]: " +
+                    "\(type(of: error)) - \(error.localizedDescription)"
+                )
                 completion(.failure(error))
             }
 

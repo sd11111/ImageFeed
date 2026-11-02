@@ -10,7 +10,10 @@ final class WebViewViewController: UIViewController {
     private var estimatedProgressObservation: NSKeyValueObservation?
     private func loadAuthView() {
         guard var urlComponents = URLComponents(string: WebViewConstants.unsplashAuthorizeURLString) else {
-            print("Ошибка - не удалось создать URLComponents для авторизации")
+            print(
+                "[WebViewViewController.loadAuthView]: " +
+                "RequestError - не удалось создать URLComponents"
+            )
             return
         }
         
@@ -22,7 +25,10 @@ final class WebViewViewController: UIViewController {
         ]
         
         guard let url = urlComponents.url else {
-            print("Ошибка - не удалось создать URL авторизации")
+            print(
+                "[WebViewViewController.loadAuthView]: " +
+                "RequestError - не удалось создать URL"
+            )
             return
         }
         

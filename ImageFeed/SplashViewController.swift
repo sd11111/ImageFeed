@@ -10,7 +10,14 @@ final class SplashViewController: UIViewController, AuthViewControllerDelegate {
 
     private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
 
-    private var imageView: UIImageView!
+    private let imageView: UIImageView = {
+        let imageView = UIImageView(
+            image: UIImage(named: "vector")
+        )
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -29,6 +36,7 @@ final class SplashViewController: UIViewController, AuthViewControllerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .ypBlack
         setupImageView()
     }
 
@@ -37,11 +45,6 @@ final class SplashViewController: UIViewController, AuthViewControllerDelegate {
     }
 
     private func setupImageView() {
-        let imageSplashScreenLogo = UIImage(named: "auth_screen_logo")
-
-        imageView = UIImageView(image: imageSplashScreenLogo)
-
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(imageView)
 
         NSLayoutConstraint.activate([
@@ -53,16 +56,31 @@ final class SplashViewController: UIViewController, AuthViewControllerDelegate {
     private func presentAuthViewController() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
 
-        guard let authViewController = storyboard.instantiateViewController(
-            withIdentifier: "AuthViewController"
-        ) as? AuthViewController else {
-            assertionFailure("Не удалось найти AuthViewController по идентификатору")
+        guard let navigationController =
+            storyboard.instantiateViewController(
+                withIdentifier: "AuthNavigationController"
+            ) as? UINavigationController
+        else {
+            assertionFailure(
+                "Не удалось создать AuthNavigationController"
+            )
+            return
+        }
+
+        guard let authViewController =
+            navigationController.viewControllers.first
+                as? AuthViewController
+        else {
+            assertionFailure(
+                "AuthViewController отсутствует в navigation stack"
+            )
             return
         }
 
         authViewController.delegate = self
-        authViewController.modalPresentationStyle = .fullScreen
-        present(authViewController, animated: true)
+        navigationController.modalPresentationStyle = .fullScreen
+
+        present(navigationController, animated: true)
     }
 
     private func switchToTabBarController() {
@@ -83,10 +101,27 @@ final class SplashViewController: UIViewController, AuthViewControllerDelegate {
 extension SplashViewController {
 
     func didAuthenticate(_ vc: AuthViewController) {
-        vc.dismiss(animated: true) { [weak self] in
-            guard let self else { return }
+        guard let navigationController = vc.navigationController else {
+            assertionFailure(
+                "AuthViewController должен находиться внутри UINavigationController"
+            )
+            return
+        }
 
-            guard let token = KeychainWrapper.standard.string(forKey: "authToken") else {
+        navigationController.dismiss(animated: true) {
+            [weak self] in
+
+            guard let self else {
+                return
+            }
+
+            guard let token = KeychainWrapper.standard.string(
+                forKey: "authToken"
+            ) else {
+                print(
+                    "[SplashViewController.didAuthenticate]: " +
+                    "AuthorizationError - токен отсутствует"
+                )
                 return
             }
 
@@ -113,7 +148,10 @@ extension SplashViewController {
                     self.switchToTabBarController()
 
                 case .failure(let error):
-                    print("Ошибка получения профиля: \(error)")
+                    print(
+                        "[SplashViewController.fetchProfile]: " +
+                        "\(type(of: error)) - \(error.localizedDescription)"
+                    )
                 }
             }
         }

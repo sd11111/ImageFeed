@@ -53,35 +53,50 @@ final class AuthViewController: UIViewController {
 }
 
 extension AuthViewController: WebViewViewControllerDelegate {
-    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
+    func webViewViewController(
+        _ vc: WebViewViewController,
+        didAuthenticateWithCode code: String
+    ) {
+        guard let navigationController = vc.navigationController else {
+            print(
+                "[AuthViewController.webViewViewController]: " +
+                "NavigationError - UINavigationController отсутствует"
+            )
+            return
+        }
 
-        vc.dismiss(animated: true) { [weak self] in
-            guard let self else { return }
+        navigationController.popViewController(animated: true)
 
-            UIBlockingProgressHUD.show()
+        UIBlockingProgressHUD.show()
 
-            self.oauth2Service.fetchOAuthToken(code: code) { [weak self] result in
-                UIBlockingProgressHUD.dismiss()
+        oauth2Service.fetchOAuthToken(code: code) {
+            [weak self] result in
 
-                guard let self else { return }
+            UIBlockingProgressHUD.dismiss()
 
-                switch result {
+            guard let self else {
+                return
+            }
 
-                case .success(let token):
-                    print("1. Токен получен")
-                    print("2. Делегат: \(String(describing: self.delegate))")
-                    self.delegate?.didAuthenticate(self)
+            switch result {
+            case .success:
+                self.delegate?.didAuthenticate(self)
 
-                case .failure(let error):
-                    print("Не удалось получить токен: \(error)")
-                    self.showAuthErrorAlert()
-                }
+            case .failure(let error):
+                print(
+                    "[AuthViewController.fetchOAuthToken]: " +
+                    "\(type(of: error)) - \(error.localizedDescription)"
+                )
+                self.showAuthErrorAlert()
             }
         }
     }
 
-    func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
-        vc.dismiss(animated: true, completion: nil)
+    func webViewViewControllerDidCancel(
+        _ vc: WebViewViewController
+    ) {
+        vc.navigationController?
+            .popViewController(animated: true)
     }
 }
 

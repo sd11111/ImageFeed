@@ -31,7 +31,10 @@ final class OAuth2Service {
     private func makeOAuthTokenRequest(code: String) -> URLRequest? {
 
         guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token") else {
-            print("Ошибка - не удалось создать URLComponents для OAuth token")
+            print(
+                "[OAuth2Service.makeOAuthTokenRequest]: " +
+                "RequestError - не удалось создать URLComponents"
+            )
             return nil
         }
 
@@ -44,7 +47,10 @@ final class OAuth2Service {
         ]
 
         guard let authTokenUrl = urlComponents.url else {
-            print("Ошибка - не удалось создать URL для OAuth token")
+            print(
+                "[OAuth2Service.makeOAuthTokenRequest]: " +
+                "RequestError - не удалось создать URL"
+            )
             return nil
         }
 
@@ -66,11 +72,19 @@ final class OAuth2Service {
             if lastCode != code {
                 task?.cancel()
             } else {
+                print(
+                    "[OAuth2Service.fetchOAuthToken]: " +
+                    "AuthServiceError - повторный OAuth-код"
+                )
                 completion(.failure(AuthServiceError.invalidRequest))
                 return
             }
         } else {
             if lastCode == code {
+                print(
+                    "[OAuth2Service.fetchOAuthToken]: " +
+                    "AuthServiceError - повторный OAuth-код"
+                )
                 completion(.failure(AuthServiceError.invalidRequest))
                 return
             }
@@ -104,7 +118,10 @@ final class OAuth2Service {
                     completion(.success(response.accessToken))
 
                 case .failure(let error):
-                    print("[OAuth2Service.fetchOAuthToken]: \(error.localizedDescription)")
+                    print(
+                        "[OAuth2Service.fetchOAuthToken]: " +
+                        "\(type(of: error)) - \(error.localizedDescription)"
+                    )
                     completion(.failure(error))
                 }
             }

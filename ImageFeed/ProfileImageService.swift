@@ -43,16 +43,33 @@ final class ProfileImageService {
 
         task?.cancel()
 
-        guard let token = KeychainWrapper.standard.string(forKey: "authToken") else {
+        guard let token = KeychainWrapper.standard.string(
+            forKey: "authToken"
+        ) else {
+            print(
+                "[ProfileImageService.fetchProfileImageURL]: " +
+                "AuthorizationError - OAuth-токен отсутствует"
+            )
+
             completion(.failure(NSError(
                 domain: "ProfileImageService",
                 code: 401,
-                userInfo: [NSLocalizedDescriptionKey: "Authorization token missing"]
+                userInfo: [
+                    NSLocalizedDescriptionKey:
+                        "Authorization token missing"
+                ]
             )))
             return
         }
 
-        guard let request = makeProfileImageRequest(username: username, token: token) else {
+        guard let request = makeProfileImageRequest(
+            username: username,
+            token: token
+        ) else {
+            print(
+                "[ProfileImageService.fetchProfileImageURL]: " +
+                "RequestError - не удалось создать GET /users/:username"
+            )
             completion(.failure(URLError(.badURL)))
             return
         }
@@ -77,7 +94,10 @@ final class ProfileImageService {
                 )
 
             case .failure(let error):
-                print("[ProfileImageService.fetchProfileImageURL]: \(error.localizedDescription)")
+                print(
+                    "[ProfileImageService.fetchProfileImageURL]: " +
+                    "\(type(of: error)) - \(error.localizedDescription)"
+                )
                 completion(.failure(error))
             }
 
