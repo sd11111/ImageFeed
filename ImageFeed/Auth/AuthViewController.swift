@@ -1,5 +1,6 @@
 import UIKit
 import WebKit
+import ProgressHUD
 
 enum WebViewConstants {
     static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
@@ -14,6 +15,21 @@ final class AuthViewController: UIViewController {
         navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(named: "nav_back_button")
         navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationItem.backBarButtonItem?.tintColor = UIColor(named: "ypBlack")
+    }
+    
+    private func showAuthErrorAlert() {
+        let alert = UIAlertController(
+            title: "Что-то пошло не так",
+            message: "Не удалось войти в систему",
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(
+            title: "Ок",
+            style: .default
+        ))
+
+        present(alert, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -37,23 +53,50 @@ final class AuthViewController: UIViewController {
 }
 
 extension AuthViewController: WebViewViewControllerDelegate {
-    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        vc.dismiss(animated: true)
-        oauth2Service.fetchOAuthToken(code: code) { result in
+    func webViewViewController(
+        _ vc: WebViewViewController,
+        didAuthenticateWithCode code: String
+    ) {
+        guard let navigationController = vc.navigationController else {
+            print(
+                "[AuthViewController.webViewViewController]: " +
+                "NavigationError - UINavigationController отсутствует"
+            )
+            return
+        }
+
+        navigationController.popViewController(animated: true)
+
+        UIBlockingProgressHUD.show()
+
+        oauth2Service.fetchOAuthToken(code: code) {
+            [weak self] result in
+
+            UIBlockingProgressHUD.dismiss()
+
+            guard let self else {
+                return
+            }
+
             switch result {
-            case .success(let token):
-                print("1. Токен получен")
-                print("2. Делегат: \(String(describing: self.delegate))")
+            case .success:
                 self.delegate?.didAuthenticate(self)
 
             case .failure(let error):
-                print("Не удалось получить токен: \(error)")
+                print(
+                    "[AuthViewController.fetchOAuthToken]: " +
+                    "\(type(of: error)) - \(error.localizedDescription)"
+                )
+                self.showAuthErrorAlert()
             }
         }
     }
 
-    func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
-        vc.dismiss(animated: true, completion: nil)
+    func webViewViewControllerDidCancel(
+        _ vc: WebViewViewController
+    ) {
+        vc.navigationController?
+            .popViewController(animated: true)
     }
 }
 
