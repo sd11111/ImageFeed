@@ -23,6 +23,8 @@ struct ProfileResult: Codable {
 
 final class ProfileService {
     
+    private var sessionID = UUID()
+    
     static let shared = ProfileService()
 
     private(set) var profile: Profile?
@@ -32,6 +34,13 @@ final class ProfileService {
     private var task: URLSessionTask?
     private let urlSession = URLSession.shared
 
+    func reset() {
+        sessionID = UUID()
+        task?.cancel()
+        task = nil
+        profile = nil
+    }
+    
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
         task?.cancel()
 
@@ -43,9 +52,15 @@ final class ProfileService {
             completion(.failure(URLError(.badURL)))
             return
         }
-
+        
+        let sessionID = self.sessionID
+        
         let task = urlSession.objectTask(for: request) { [weak self] (result: Result<ProfileResult, Error>) in
 
+            guard self?.sessionID == sessionID else {
+                return
+            }
+            
             switch result {
 
             case .success(let profileResult):
@@ -81,6 +96,8 @@ final class ProfileService {
         self.task = task
         task.resume()
     }
+    
+    
 
     private func makeProfileRequest(token: String) -> URLRequest? {
         guard let url = URL(string: "https://api.unsplash.com/me") else {

@@ -60,7 +60,13 @@ final class OAuth2Service {
     }
     
     
-    
+    func reset() {
+        currentRequestID = nil
+        task?.cancel()
+        task = nil
+        lastCode = nil
+        authToken = nil
+    }
 
     func fetchOAuthToken(
         code: String,

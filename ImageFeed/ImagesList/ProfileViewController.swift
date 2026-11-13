@@ -144,6 +144,39 @@ final class ProfileViewController: UIViewController {
     // MARK: Private actions
 
     @objc private func didTapButton() {
-        print("Нажата кнопка выхода")
+        let alert = UIAlertController(
+            title: "Выход из аккаунта",
+            message: "Вы уверены, что хотите выйти?",
+            preferredStyle: .alert
+        )
+
+        alert.addAction(
+            UIAlertAction(
+                title: "Отмена",
+                style: .cancel
+            )
+        )
+
+        alert.addAction(
+            UIAlertAction(
+                title: "Выйти",
+                style: .destructive
+            ) { [weak self] _ in
+                guard
+                    let self,
+                    let window = self.view.window
+                else {
+                    return
+                }
+
+                self.exitButton.isEnabled = false
+
+                ProfileLogoutService.shared.logout {
+                    window.rootViewController = SplashViewController()
+                }
+            }
+        )
+
+        present(alert, animated: true)
     }
 }
