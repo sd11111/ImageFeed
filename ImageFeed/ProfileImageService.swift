@@ -28,6 +28,8 @@ final class ProfileImageService {
     static let shared = ProfileImageService()
 
     private init() {}
+    
+    private var sessionID = UUID()
 
     // Приватное свойство для хранения URL аватарки
     private(set) var avatarURL: String?
@@ -38,6 +40,8 @@ final class ProfileImageService {
         rawValue: "ProfileImageProviderDidChange"
     )
 
+    
+    
     // Метод для получения аватарки по имени пользователя
     func fetchProfileImageURL(username: String, completion: @escaping (Result<String, Error>) -> Void) {
 
@@ -73,9 +77,15 @@ final class ProfileImageService {
             completion(.failure(URLError(.badURL)))
             return
         }
+        
+        let sessionID = self.sessionID
 
         let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
-
+            
+            guard self?.sessionID == sessionID else {
+                return
+            }
+            
             guard let self else { return }
 
             switch result {
@@ -108,6 +118,13 @@ final class ProfileImageService {
         task.resume()
     }
 
+    func reset() {
+        sessionID = UUID()
+        task?.cancel()
+        task = nil
+        avatarURL = nil
+    }
+    
     private func makeProfileImageRequest(username: String, token: String) -> URLRequest? {
 
         guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else {
