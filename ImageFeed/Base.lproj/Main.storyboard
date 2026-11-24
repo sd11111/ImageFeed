@@ -33,6 +33,7 @@
                             </scrollView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ajs-i5-Klv" userLabel="BackButton">
                                 <rect key="frame" x="8" y="67" width="48" height="48"/>
+                                <accessibility key="accessibilityConfiguration" identifier="nav back button white"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="NoA-PT-qR1"/>
                                     <constraint firstAttribute="width" constant="48" id="plg-go-beq"/>
@@ -227,6 +228,7 @@
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="exl-xm-siv">
                                 <rect key="frame" x="16" y="646" width="361" height="48"/>
+                                <accessibility key="accessibilityConfiguration" identifier="Authenticate"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="TQb-VB-hYw"/>
                                 </constraints>
@@ -281,7 +283,7 @@
         <!--Web View View Controller-->
         <scene sceneID="YVI-sP-cW5">
             <objects>
-                <viewController id="xuL-yI-PKv" customClass="WebViewViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="WebViewViewController" id="xuL-yI-PKv" customClass="WebViewViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="pPo-6b-b84">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -301,6 +303,7 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="jGT-jd-7ha"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <accessibility key="accessibilityConfiguration" identifier="UnsplashWebView"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="Yt6-vg-VUz" secondAttribute="trailing" id="8Bv-Yh-Gy5"/>
                             <constraint firstItem="jGT-jd-7ha" firstAttribute="trailing" secondItem="cKv-wP-VRq" secondAttribute="trailing" id="CSy-gc-k6C"/>
