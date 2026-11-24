@@ -2,13 +2,16 @@
 import UIKit
 import Kingfisher
 
-final class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
 
     // MARK: Private UI Variables
 
-    private let profileService = ProfileService.shared
+    private var presenter: ProfilePresenterProtocol!
 
-    private var profileImageServiceObserver: NSObjectProtocol?
+    func configure(_ presenter: ProfilePresenterProtocol) {
+        self.presenter = presenter
+        presenter.view = self
+    }
 
     private lazy var profileImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(resource: .userpick))
@@ -22,25 +25,27 @@ final class ProfileViewController: UIViewController {
     private lazy var profileNameLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypWhite
-        label.text = "Екатерина Новикова"
+        label.text = nil
         label.font = UIFont.systemFont(ofSize: 23, weight: .bold)
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.accessibilityIdentifier = "ProfileName"
         return label
     }()
 
     private lazy var profileUsernameLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypGray
-        label.text = "@ekaterina_nov"
+        label.text = nil
         label.font = UIFont.systemFont(ofSize: 13)
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.accessibilityIdentifier = "ProfileUsername"
         return label
     }()
 
     private lazy var profileStatusLabel: UILabel = {
         let label = UILabel()
         label.textColor = .ypWhite
-        label.text = "Hello, world!"
+        label.text = nil
         label.font = UIFont.systemFont(ofSize: 13)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -54,6 +59,7 @@ final class ProfileViewController: UIViewController {
         )
         button.tintColor = .ypRed
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.accessibilityIdentifier = "logout button"
         return button
     }()
 
@@ -70,37 +76,19 @@ final class ProfileViewController: UIViewController {
 
         setupConstrains()
 
-        if let profile = profileService.profile {
-            updateProfileDetails(profile: profile)
-        }
-
-        // ДОБАВЛЕНО: подписка на изменение URL аватарки
-        profileImageServiceObserver = NotificationCenter.default.addObserver(
-            forName: ProfileImageService.didChangeNotification,
-            object: ProfileImageService.shared,
-            queue: .main
-        ) { [weak self] _ in
-            self?.updateAvatar()
-        }
-
-        updateAvatar()
+        presenter.viewDidLoad()
     }
 
-    deinit {
-        if let observer = profileImageServiceObserver {
-            NotificationCenter.default.removeObserver(observer)
-        }
-    }
 
     // MARK: Private methods
 
-    private func updateProfileDetails(profile: Profile) {
+    func updateProfileDetails(profile: Profile) {
         profileNameLabel.text = profile.name
         profileUsernameLabel.text = profile.loginName
         profileStatusLabel.text = profile.bio
     }
 
-    private func updateAvatar() {
+    func updateAvatar() {
         guard
             let profileImageURL = ProfileImageService.shared.avatarURL,
             let url = URL(string: profileImageURL)

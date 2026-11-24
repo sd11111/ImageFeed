@@ -152,6 +152,7 @@ extension SplashViewController {
                         "[SplashViewController.fetchProfile]: " +
                         "\(type(of: error)) - \(error.localizedDescription)"
                     )
+                    self.switchToTabBarController()
                 }
             }
         }

@@ -70,8 +70,8 @@ final class SingleImageViewController : UIViewController {
             switch result {
             case .success(let imageResult):
                 self.image = imageResult.image
-
             case .failure:
+                self.image = UIImage(named: "stub")
                 self.showError()
             }
         }
